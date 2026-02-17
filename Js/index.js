@@ -53,3 +53,5 @@ const displayTrending = (products) => {
 
 
 loadTrending()
+
+
