@@ -1,131 +1,105 @@
-const loadCatagory = () =>{
-
-    const url = "https://fakestoreapi.com/products/categories"
-
+let allProducts = []
+const loadCatagory = () => {
+    let url = "https://fakestoreapi.com/products/categories"
+    let tempCat = []
     fetch(url)
-    .then((res) => res.json())
-    // .then((json) => console.log(json.data))
-    .then((json) => displayCatagory(json))
+        .then(res => res.json())
+        .then(json => {
+            for (let i = 0; i < json.length; i++) tempCat.push(json[i])
+            displayCatagory(tempCat)
+        })
 }
 
-
 const displayCatagory = (catagories) => {
+    let newCategories = ["all"]
 
-    // adding all to the font manually 
-    const newCategories = ["all", ...catagories];
-
-    const CatagoryContainer = document.getElementById("pcat");
+    for (let i = 0; i < catagories.length; i++) newCategories.push(catagories[i])
+    let CatagoryContainer = document.getElementById("pcat")
     CatagoryContainer.innerHTML = ""
-
-
-    for(let catagory of newCategories){
-
-        const id = catagory.replace(/[^a-zA-Z0-9]/g, "");
-
-        const btnCat = document.createElement("div")
-        const catagoryName = catagory
-        btnCat.innerHTML = 
-        `
-        <button id = "catagory-btn-${id}" 
-        onclick="loadproduct(\`${catagory}\`)"
-        class="btn btn-outline btn-primary catagory-btn">
-        ${catagory}
-        </button>
-        `
+    
+    for (let catagory of newCategories) {
+        let id = catagory.replace(/[^a-zA-Z0-9]/g, "")
+        let btnCat = document.createElement("div")
+        btnCat.innerHTML = `<button id="catagory-btn-${id}" onclick="loadproduct('${catagory}')" class="btn btn-outline btn-primary catagory-btn">${catagory}</button>`
         CatagoryContainer.append(btnCat)
     }
 }
 
-const loadproduct = (product) => {
-    
-    const url = `https://fakestoreapi.com/products/category/${product}`
-    
-     
-     const id = product.replace(/[^a-zA-Z0-9]/g, "");
-     fetch(url)
-     .then((res) => res.json())
-     .then((data) => {
-        const clickBtn = document.getElementById(`catagory-btn-${id}`)
-         removeActive()
-        clickBtn.classList.add("active")
-        displayProduct(data)
-})
-}
-
 const removeActive = () => {
-    const buttons = document.querySelectorAll(".catagory-btn");
-    buttons.forEach(btn => btn.classList.remove("active"));
+    let buttons = document.querySelectorAll(".catagory-btn")
+    for (let i = 0; i < buttons.length; i++) {
+        if (buttons[i].classList.contains("active")) buttons[i].classList.remove("active")
+    }
 }
 
+const loadproduct = (product) => {
+    removeActive()
+    let id = product.replace(/[^a-zA-Z0-9]/g, "")
+    let clickBtn = document.getElementById(`catagory-btn-${id}`)
+    if (clickBtn) clickBtn.classList.add("active")
+
+    if (product === "all") {
+        if (allProducts.length > 0) return displayProduct(allProducts)
+        fetch("https://fakestoreapi.com/products")
+            .then(res => res.json())
+            .then(data => {
+                allProducts = data
+                displayProduct(data)
+            })
+        return
+    }
+
+    fetch(`https://fakestoreapi.com/products/category/${product}`)
+        .then(res => res.json())
+        .then(data => displayProduct(data))
+}
 
 const displayProduct = (product) => {
-   
-    const productContainer = document.getElementById("pc");
+    let productContainer = document.getElementById("pc")
     productContainer.innerHTML = ""
-
-    for(let produc of product){
-
-        const procard = document.createElement("div")
-        // procard.classList.add();
-        procard.innerHTML = 
-        `
-        <div class="card bg-base-100 w-96  shadow-sm">
-    
-                <figure class="px-3 pt-3">
-                    <img src="${produc.image}" alt="Shoes"
-     class="w-full h-[360px] sm:h-[192px] md:h-[224px] object-contain rounded-xl" />
-                </figure>
-    
-                <div class="card-body">
-    
-                    <!-- Top Row -->
-                    <div class="flex justify-between items-center">
-                        <span class="inline-flex items-center bg-[#ae00e395] text-white rounded-full px-3 py-1 text-sm">
-                            <p> ${produc.category} </p>
-                        </span>
-
-                        <span class="text-sm text-gray-500">
-                        <p> <i class="fa-solid fa-star text-yellow-500"></i> ${produc.rating.rate}(${produc.rating.count})</p>
-                        </span>
-                    </div>
-    
-                    <!-- Title -->
-                    <h2 class="card-title mt-2">${produc.title}</h2>
-                    <h2 class="font-bold text-lg">$${produc.price}</h2>
-    
-                    <!-- Buttons -->
-                    <div class="card-actions justify-between mt-4">
-                        <button onclick="loadDetails(${produc.id})" class="btn px-6 flex items-center gap-2">
-                            <i class="fa-regular fa-eye"></i>
-                            Details
-                        </button>
-    
-                        <button class="btn btn-primary px-6 flex items-center gap-2">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                            Add
-                        </button>
-                    </div>
+    for (let i = 0; i < product.length; i++) {
+        let produc = product[i]
+        let procard = document.createElement("div")
+        procard.innerHTML = `
+        <div class="card bg-base-100 w-96 shadow-sm">
+            <figure class="px-3 pt-3">
+                <img src="${produc.image}" alt="${produc.title}" class="w-full h-[360px] sm:h-[192px] md:h-[224px] object-contain rounded-xl"/>
+            </figure>
+            <div class="card-body">
+                <div class="flex justify-between items-center">
+                    <span class="inline-flex items-center bg-[#ae00e395] text-white rounded-full px-3 py-1 text-sm">
+                        <p>${produc.category}</p>
+                    </span>
+                    <span class="text-sm text-gray-500">
+                        <p><i class="fa-solid fa-star text-yellow-500"></i> ${produc.rating.rate}(${produc.rating.count})</p>
+                    </span>
+                </div>
+                <h2 class="card-title mt-2">${produc.title}</h2>
+                <h2 class="font-bold text-lg">$${produc.price}</h2>
+                <div class="card-actions justify-between mt-4">
+                    <button onclick="loadDetails(${produc.id})" class="btn px-6 flex items-center gap-2">
+                        <i class="fa-regular fa-eye"></i> Details
+                    </button>
+                    <button class="btn btn-primary px-6 flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping"></i> Add
+                    </button>
                 </div>
             </div>
+        </div>
         `
         productContainer.append(procard)
     }
-
 }
 
 const loadDetails = (id) => {
-    const url = `https://fakestoreapi.com/products/${id}`;
-
-    fetch(url)
+    fetch(`https://fakestoreapi.com/products/${id}`)
         .then(res => res.json())
-        .then(product => {
-            showd(product); 
-        })
-        .catch(err => console.error("Error loading product:", err));
+        .then(product => showd(product))
+        .catch(err => console.error(err))
 }
 
 const showd = (product) => {
-    const detailBox = document.getElementById("details-container");
+    const detailBox = document.getElementById("details-container")
     detailBox.innerHTML = `
         <div class="flex flex-col md:flex-row gap-4">
             <img src="${product.image}" alt="${product.title}" class="w-full md:w-1/3 max-h-80 object-contain rounded-xl" />
@@ -141,10 +115,9 @@ const showd = (product) => {
                 </p>
             </div>
         </div>
-    `;
-
-    document.getElementById("d_modal").showModal();
+    `
+    document.getElementById("d_modal").showModal()
 }
 
-
-loadCatagory();
+loadCatagory()
+loadproduct("all")
