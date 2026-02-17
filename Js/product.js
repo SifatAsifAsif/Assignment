@@ -65,15 +65,85 @@ const displayProduct = (product) => {
     for(let produc of product){
 
         const procard = document.createElement("div")
-        procard.classList.add("flex", "flex-wrap", "gap-6");
+        // procard.classList.add();
         procard.innerHTML = 
         `
-        <p> akm groga </p>
+        <div class="card bg-base-100 w-96  shadow-sm">
+    
+                <figure class="px-3 pt-3">
+                    <img src="${produc.image}" alt="Shoes"
+     class="w-full h-[360px] sm:h-[192px] md:h-[224px] object-contain rounded-xl" />
+                </figure>
+    
+                <div class="card-body">
+    
+                    <!-- Top Row -->
+                    <div class="flex justify-between items-center">
+                        <span class="inline-flex items-center bg-[#ae00e395] text-white rounded-full px-3 py-1 text-sm">
+                            <p> ${produc.category} </p>
+                        </span>
+
+                        <span class="text-sm text-gray-500">
+                        <p> <i class="fa-solid fa-star text-yellow-500"></i> ${produc.rating.rate}(${produc.rating.count})</p>
+                        </span>
+                    </div>
+    
+                    <!-- Title -->
+                    <h2 class="card-title mt-2">${produc.title}</h2>
+                    <h2 class="font-bold text-lg">$${produc.price}</h2>
+    
+                    <!-- Buttons -->
+                    <div class="card-actions justify-between mt-4">
+                        <button onclick="loadDetails(${produc.id})" class="btn px-6 flex items-center gap-2">
+                            <i class="fa-regular fa-eye"></i>
+                            Details
+                        </button>
+    
+                        <button class="btn btn-primary px-6 flex items-center gap-2">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </div>
         `
         productContainer.append(procard)
     }
 
 }
+
+const loadDetails = (id) =>{
+    
+    const url = `https://fakestoreapi.com/products/`
+     
+     fetch(url)
+     .then((res) => res.json())
+     .then((data) => {
+     showdetail(data, id)
+})
+}
+
+const allP = () => {
+
+    const url = `https://fakestoreapi.com/products/`
+
+    fetch(url)
+        .then((res) => res.json())
+        .then((data) => {
+            showdetail(data, id)
+        })
+}
+
+const showdetail = (data, x) => {
+    let target = {}
+
+    for(let da of data){
+        if(da.id == x) target = da;
+    }
+
+    console.log(target)
+};
+
 
 
 loadCatagory();
