@@ -1,6 +1,7 @@
 let allProducts = []
 const loadCatagory = () => {
     let url = "https://fakestoreapi.com/products/categories"
+    // console.log(url)
     let tempCat = []
     fetch(url)
         .then(res => res.json())
@@ -44,6 +45,7 @@ const loadproduct = (product) => {
             .then(res => res.json())
             .then(data => {
                 allProducts = data
+                // console.log(data)
                 displayProduct(data)
             })
         return
@@ -75,12 +77,17 @@ const displayProduct = (product) => {
                     </span>
                 </div>
                 <h2 class="card-title mt-2">${produc.title}</h2>
+               
                 <h2 class="font-bold text-lg">$${produc.price}</h2>
+                 
                 <div class="card-actions justify-between mt-4">
                     <button onclick="loadDetails(${produc.id})" class="btn px-6 flex items-center gap-2">
-                        <i class="fa-regular fa-eye"></i> Details
-                    </button>
-                    <button class="btn btn-primary px-6 flex items-center gap-2">
+                        
+                    
+                    <i class="fa-regular fa-eye"></i> Details
+                                  </button>
+                  
+                                  <button class="btn btn-primary px-6 flex items-center gap-2">
                         <i class="fa-solid fa-cart-shopping"></i> Add
                     </button>
                 </div>
