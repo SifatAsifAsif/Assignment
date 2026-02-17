@@ -46,16 +46,17 @@ const loadproduct = (product) => {
      .then((res) => res.json())
      .then((data) => {
         const clickBtn = document.getElementById(`catagory-btn-${id}`)
+         removeActive()
         clickBtn.classList.add("active")
-        // removeActive()
         displayProduct(data)
 })
 }
 
-// const removeActive = () => {
-//     const target = document.getElementById("pcat")
-//     const newTarget = target.querySelectorAll(".active")
-//  
+const removeActive = () => {
+    const buttons = document.querySelectorAll(".catagory-btn");
+    buttons.forEach(btn => btn.classList.remove("active"));
+}
+
 
 const displayProduct = (product) => {
    
@@ -112,38 +113,38 @@ const displayProduct = (product) => {
 
 }
 
-const loadDetails = (id) =>{
-    
-    const url = `https://fakestoreapi.com/products/`
-     
-     fetch(url)
-     .then((res) => res.json())
-     .then((data) => {
-     showdetail(data, id)
-})
-}
-
-const allP = () => {
-
-    const url = `https://fakestoreapi.com/products/`
+const loadDetails = (id) => {
+    const url = `https://fakestoreapi.com/products/${id}`;
 
     fetch(url)
-        .then((res) => res.json())
-        .then((data) => {
-            showdetail(data, id)
+        .then(res => res.json())
+        .then(product => {
+            showd(product); 
         })
+        .catch(err => console.error("Error loading product:", err));
 }
 
-const showdetail = (data, x) => {
-    let target = {}
+const showd = (product) => {
+    const detailBox = document.getElementById("details-container");
+    detailBox.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-4">
+            <img src="${product.image}" alt="${product.title}" class="w-full md:w-1/3 max-h-80 object-contain rounded-xl" />
+            
+            <div class="flex-1 space-y-2">
+                <h2 class="text-2xl font-bold">${product.title}</h2>
+                <p class="text-gray-600">${product.category}</p>
+                <p class="text-gray-800">${product.description}</p>
+                <p class="font-bold text-xl">$${product.price}</p>
+                <p class="text-sm text-gray-500">
+                    <i class="fa-solid fa-star text-yellow-500"></i>
+                    ${product.rating.rate} (${product.rating.count} reviews)
+                </p>
+            </div>
+        </div>
+    `;
 
-    for(let da of data){
-        if(da.id == x) target = da;
-    }
-
-    console.log(target)
-};
-
+    document.getElementById("d_modal").showModal();
+}
 
 
 loadCatagory();
